@@ -1,0 +1,84 @@
+# Configuration schema for Python projects
+# This defines what variables can be used in the Jenkinsfile template
+
+project_name:
+  type: string
+  required: true
+  description: "Name of the project"
+  example: "my-flask-api"
+
+python_version:
+  type: string
+  required: true
+  default: "3.11"
+  description: "Python version to use"
+  allowed_values: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+framework:
+  type: string
+  required: false
+  default: null
+  description: "Python framework (flask, django, fastapi)"
+  allowed_values: ["flask", "django", "fastapi", null]
+
+package_manager:
+  type: string
+  required: true
+  default: "pip"
+  description: "Package manager to use"
+  allowed_values: ["pip", "poetry", "pipenv"]
+
+test_framework:
+  type: string
+  required: true
+  default: "pytest"
+  description: "Test framework"
+  allowed_values: ["pytest", "unittest"]
+
+app_module:
+  type: string
+  required: true
+  description: "Main application module name (for coverage)"
+  example: "app"
+  help: "This is typically the folder name containing your Python code"
+
+has_requirements_txt:
+  type: boolean
+  required: true
+  default: true
+  description: "Does requirements.txt exist?"
+
+has_requirements_dev:
+  type: boolean
+  required: true
+  default: false
+  description: "Does requirements-dev.txt exist?"
+
+build_package:
+  type: boolean
+  required: false
+  default: false
+  description: "Should we build a distributable package (wheel/sdist)?"
+  help: "Set to true for libraries, false for applications"
+
+enable_linting:
+  type: boolean
+  required: false
+  default: true
+  description: "Enable linting stage"
+
+enable_security_scan:
+  type: boolean
+  required: false
+  default: true
+  description: "Enable security scanning"
+
+docker_base_image:
+  type: string
+  required: false
+  default: "python:{{ python_version }}-slim"
+  description: "Base Docker image"
+  examples:
+    - "python:3.11-slim"
+    - "python:3.11-alpine"
+    - "python:3.11-bullseye"

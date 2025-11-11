@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+cicd_cli.egg-info/PKG-INFO
+cicd_cli.egg-info/SOURCES.txt
+cicd_cli.egg-info/dependency_links.txt
+cicd_cli.egg-info/entry_points.txt
+cicd_cli.egg-info/requires.txt
+cicd_cli.egg-info/top_level.txt
+cli/detector.py
+cli/generator.py
+cli/main.py
+cli/models.py
