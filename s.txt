@@ -1,0 +1,343 @@
+
+from pathlib import Path
+from typing import Dict, List, Union
+
+
+class ProjectDetector:
+    """Detect project type from files"""
+
+    def __init__(self, project_path: Union[str, Path]):
+        self.path = Path(project_path)
+
+    def detect(self) -> Dict:
+        """Detect and return project info (provides both lowercase and capitalized keys)"""
+        result = {
+            "language": "N/A",
+            "framework": "N/A",
+            "build_tool": "N/A",
+        }
+
+        # Detect Python
+        if self._has_any(["requirements.txt", "setup.py", "pyproject.toml"]):
+            result["language"] = "python"
+            result["Language"] = "Python"
+
+            if (self.path / "manage.py").exists():
+                result["framework"] = "django"
+                result["Framework"] = "Django"
+            elif self._find_in_files("from flask import", ["*.py"]):
+                result["framework"] = "flask"
+                result["Framework"] = "Flask"
+
+        # Detect Node.js
+        elif (self.path / "package.json").exists():
+            result["language"] = "nodejs"
+            result["Language"] = "Node.js"
+
+            if self._find_in_files("express", ["package.json"]):
+                result["framework"] = "express"
+                result["Framework"] = "Express"
+
+        # Detect Java
+        elif self._has_any(["pom.xml", "build.gradle"]):
+            result["language"] = "java"
+            result["Language"] = "Java"
+            result["build_tool"] = "maven" if (self.path / "pom.xml").exists() else "gradle"
+
+        return result
+
+    def _has_any(self, files: List[str]) -> bool:
+        """Check if any file exists at project root"""
+        return any((self.path / f).exists() for f in files)
+
+    def _find_in_files(self, text: str, patterns: List[str]) -> bool:
+        """Search for text in files matching patterns (recursive)"""
+        for pattern in patterns:
+            try:
+                for file in self.path.rglob(pattern):
+                    if not file.is_file():
+                        continue
+                    try:
+                        content = file.read_text(encoding="utf-8", errors="ignore")
+                        if text in content:
+                            return True
+                    except (OSError, UnicodeError):
+                        continue
+            except Exception:
+                continue
+        return False
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader
+from typing import Dict, List, Union
+
+
+class ProjectGenerator:
+
+    def __init__(self, templates_dir: Union[str, Path] = "templates"):
+        self.templates_dir = Path(templates_dir)
+        self.env = Environment(loader=FileSystemLoader(str(self.templates_dir)))
+
+    def generate(self, project_info: Dict, output_dir: Union[str, Path]) -> List[Path]:
+        """Generate all files for a project"""
+        language = project_info.get("language") or project_info.get("Language")
+        if not language or language == "N/A":
+            raise ValueError("Could not detect project language")
+
+        output_path = Path(output_dir)
+        generated: List[Path] = []
+
+        context = {
+            "project_name": output_path.name,
+            "language": language,
+            "framework": project_info.get("framework") or project_info.get("Framework"),
+        }
+
+        template_dir = self.templates_dir / language
+        if not template_dir.exists():
+            raise FileNotFoundError(f"Templates for language {language!r} not found at {template_dir}")
+
+        for template_file in template_dir.glob("**/*.j2"):
+            # template relative to templates_dir (e.g. "python/Dockerfile.j2")
+            rel = template_file.relative_to(self.templates_dir)
+            template_name = rel.as_posix()  # Jinja2 expects posix-style paths
+            # preserve subdirectories and remove the .j2 suffix for output filename
+            output_file = output_path / rel.with_suffix("")
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+
+            generated.append(self._generate_file(template_name, output_file, context))
+
+        return generated
+
+    def _generate_file(self, template_name: str, output_path: Path, context: Dict) -> Path:
+        """Generate single file"""
+        template = self.env.get_template(template_name)
+        content = template.render(**context)
+        output_path.write_text(content, encoding="utf-8")
+        return output_path
+
+
+
+
+
+
+
+"""
+Generator for Python projects
+Place this at: cli/generator.py
+"""
+import os
+from pathlib import Path
+from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
+
+
+class ProjectGenerator:
+    def __init__(self, templates_dir):
+        """
+        Initialize generator with templates directory
+
+        Args:
+            templates_dir: Path to templates folder
+        """
+        self.templates_dir = Path(templates_dir)
+
+        # Setup Jinja2 environment
+        self.jinja_env = Environment(
+            loader=FileSystemLoader(str(self.templates_dir)),
+            trim_blocks=True,
+            lstrip_blocks=True
+        )
+
+    def generate(self, detection_result, output_dir):
+        """
+        Generate pipeline files based on detection result
+
+        Args:
+            detection_result: Dict from detector
+            output_dir: Where to write generated files
+
+        Returns:
+            Dict with paths of generated files
+        """
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
+
+        # Get project path
+        project_path = Path(detection_result.get('project_path', '.'))
+
+        # Prepare template context
+        context = self._prepare_context(detection_result, project_path)
+
+        print(f"\n📦 Generating files for: {context['project_name']}")
+        print(f"   Python: {context['python_version']}")
+        print(f"   Framework: {context['framework'] or 'N/A'}")
+        print(f"   Package Manager: {context['package_manager']}")
+
+        # Generate files
+        generated_files = {}
+
+        # 1. Generate Jenkinsfile
+        jenkinsfile_path = output_path / 'Jenkinsfile'
+        self._generate_file('jenkins_test.j2', context, jenkinsfile_path)
+        generated_files['jenkinsfile'] = str(jenkinsfile_path)
+
+        # 2. Generate Dockerfile
+        dockerfile_path = output_path / 'Dockerfile'
+        self._generate_file('docker_test.j2', context, dockerfile_path)
+        generated_files['dockerfile'] = str(dockerfile_path)
+
+        # 3. Generate docker-compose.yml (if template exists)
+        if (self.templates_dir / 'docker-compose.yml.j2').exists():
+            compose_path = output_path / 'docker-compose.yml'
+            self._generate_file('docker-compose.yml.j2', context, compose_path)
+            generated_files['docker_compose'] = str(compose_path)
+
+        # 4. Generate README (if template exists)
+        if (self.templates_dir / 'README.md.j2').exists():
+            readme_path = output_path / 'CICD_README.md'
+            self._generate_file('README.md.j2', context, readme_path)
+            generated_files['readme'] = str(readme_path)
+
+        return {
+            'context': context,
+            'generated_files': generated_files
+        }
+
+    def _prepare_context(self, detection_result, project_path):
+        """Prepare Jinja2 template context from detection results"""
+
+        # Get project name from directory
+        project_name = project_path.name
+
+        # Detect app module (main source code directory)
+        app_module = self._detect_app_module(project_path)
+
+        # Check for requirements files
+        has_requirements_txt = (project_path / 'requirements.txt').exists()
+        has_requirements_dev = (project_path / 'requirements-dev.txt').exists()
+
+        # Determine if this is a library or application
+        build_package = self._is_library(project_path)
+
+        context = {
+            # Basic info
+            'project_name': project_name,
+            'generation_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+
+            # From detection
+            'language': detection_result.get('language', 'python'),
+            'python_version': detection_result.get('python_version', '3.11'),
+            'framework': detection_result.get('framework'),
+            'package_manager': detection_result.get('package_manager', 'pip'),
+            'test_framework': detection_result.get('test_framework', 'pytest'),
+
+            # Detected project structure
+            'app_module': app_module,
+            'has_requirements_txt': has_requirements_txt,
+            'has_requirements_dev': has_requirements_dev,
+            'build_package': build_package,
+
+            # Pipeline configuration
+            'enable_linting': True,
+            'enable_security_scan': True,
+            'enable_docker': True,
+
+            # Docker config
+            'docker_base_image': f"python:{detection_result.get('python_version', '3.11')}-slim",
+            'docker_port': self._get_framework_port(detection_result.get('framework')),
+        }
+
+        return context
+
+    def _detect_app_module(self, project_path):
+        """
+        Detect the main application module name
+        Common patterns: app/, src/, project_name/
+        """
+        # Check common directories
+        for candidate in ['app', 'src', project_path.name]:
+            candidate_path = project_path / candidate
+            if candidate_path.is_dir() and (candidate_path / '__init__.py').exists():
+                return candidate
+
+        # Fallback: find any directory with __init__.py
+        for item in project_path.iterdir():
+            if item.is_dir() and (item / '__init__.py').exists():
+                # Skip common non-app directories
+                if item.name not in ['tests', 'test', 'docs', 'scripts', 'venv', '.venv']:
+                    return item.name
+
+        return 'app'  # Default fallback
+
+    def _is_library(self, project_path):
+        """
+        Determine if this is a library (needs package building) or application
+        """
+        if (project_path / 'setup.py').exists():
+            return True
+
+        pyproject = project_path / 'pyproject.toml'
+        if pyproject.exists():
+            content = pyproject.read_text()
+            if '[build-system]' in content:
+                return True
+
+        return False
+
+    def _get_framework_port(self, framework):
+        """Get default port for framework"""
+        ports = {
+            'flask': 5000,
+            'django': 8000,
+            'fastapi': 8000,
+        }
+        return ports.get(framework, 8000)
+
+    def _generate_file(self, template_name, context, output_path):
+        """Generate a single file from template"""
+        try:
+            template = self.jinja_env.get_template(template_name)
+            content = template.render(context)
+            output_path.write_text(content)
+            print(f"   ✓ Generated: {output_path.name}")
+        except Exception as e:
+            print(f"   ✗ Failed to generate {template_name}: {e}")
+            raise
+
+
+# For testing
+if __name__ == "__main__":
+    # Example usage
+    detection = {
+        'language': 'python',
+        'framework': 'flask',
+        'python_version': '3.11',
+        'package_manager': 'pip',
+        'test_framework': 'pytest',
+        'project_path': '/tmp/test-flask-app'
+    }
+
+    generator = ProjectGenerator('templates')
+    result = generator.generate(detection, '/tmp/test-flask-app/generated')
+
+    print("\n✅ Generation complete!")
+    print(f"Files: {list(result['generated_files'].keys())}")
+
