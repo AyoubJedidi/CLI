@@ -6,7 +6,13 @@ cicd_cli.egg-info/dependency_links.txt
 cicd_cli.egg-info/entry_points.txt
 cicd_cli.egg-info/requires.txt
 cicd_cli.egg-info/top_level.txt
-cli/detector.py
-cli/generator.py
 cli/main.py
-cli/models.py
+core/__init__.py
+core/base_detector.py
+core/base_generator.py
+frameworks/__init__.py
+frameworks/python/__init__.py
+frameworks/python/detector.py
+frameworks/python/generator.py
+frameworks/python/templates/docker_test.j2
+frameworks/python/templates/jenkins_test.j2

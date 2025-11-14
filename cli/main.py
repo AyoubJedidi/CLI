@@ -1,11 +1,13 @@
-# python
+"""
+CLI for cicd-framework tool
+Auto-detects project framework and generates CI/CD files
+"""
 from typing import Optional
 import typer
 from pathlib import Path
 from rich.console import Console
 from rich.table import Table
-from .detector import ProjectDetector  # Changed from ProjectDetector
-from .generator import ProjectGenerator
+from frameworks import AVAILABLE_FRAMEWORKS
 
 app = typer.Typer()
 console = Console()
@@ -14,43 +16,84 @@ console = Console()
 @app.command()
 def init(
         path: Path = typer.Argument(Path("."), help="Project Path"),
-        project_type: Optional[str] = typer.Option(None, "--type", help="Force Project Type"),
+        framework: Optional[str] = typer.Option(None, "--framework", help="Force specific framework"),
 ):
-    console.print("Detecting project")
+    """
+    Initialize CI/CD pipeline for a project
+    Auto-detects framework or use --framework to specify
+    """
+    console.print("🔍 Detecting project framework...")
 
-    # Initialize detector
-    detector = ProjectDetector(path)  # Changed class name
-    result = detector.detect()
+    project_path = Path(path).resolve()
+
+    # If user specified framework, use only that
+    if framework:
+        if framework not in AVAILABLE_FRAMEWORKS:
+            console.print(f"[red]✗ Unknown framework: {framework}[/red]")
+            console.print(f"Available frameworks: {', '.join(AVAILABLE_FRAMEWORKS.keys())}")
+            return
+
+        frameworks_to_try = [framework]
+    else:
+        # Try all available frameworks
+        frameworks_to_try = list(AVAILABLE_FRAMEWORKS.keys())
+
+    # Try each framework detector
+    detection_result = None
+    detected_framework = None
+
+    for fw_name in frameworks_to_try:
+        fw_config = AVAILABLE_FRAMEWORKS[fw_name]
+        DetectorClass = fw_config['detector']
+
+        console.print(f"   Trying {fw_name}...")
+
+        # Initialize detector and try detection
+        detector = DetectorClass(project_path)
+        result = detector.detect()
+
+        if result is not None:
+            detection_result = result
+            detected_framework = fw_name
+            console.print(f"[green]✓ Detected: {fw_name}[/green]")
+            break
 
     # Check if detection failed
-    if result is None:
-        console.print("[red]✗ No Python project detected![/red]")
+    if detection_result is None:
+        console.print("[red]✗ No supported framework detected![/red]")
+        console.print(f"Supported frameworks: {', '.join(AVAILABLE_FRAMEWORKS.keys())}")
         return
 
     # Add project path to result
-    result['project_path'] = str(path)
+    detection_result['project_path'] = str(project_path)
 
     # Display detection results
     table = Table(title="Detection Results")
     table.add_column("Property", style="cyan")
     table.add_column("Value", style="green")
 
-    # Use correct keys from detector (lowercase)
-    table.add_row("Language", result.get("language", "N/A"))
-    table.add_row("Framework", result.get("framework") or "N/A")
-    table.add_row("Python Version", result.get("python_version", "N/A"))
-    table.add_row("Package Manager", result.get("package_manager", "N/A"))
-    table.add_row("Test Framework", result.get("test_framework", "N/A"))
+    table.add_row("Framework", detected_framework)
+    table.add_row("Language", detection_result.get("language", "N/A"))
+
+    # Add framework-specific details
+    if detected_framework == 'python':
+        table.add_row("Python Version", detection_result.get("python_version", "N/A"))
+        table.add_row("Package Manager", detection_result.get("package_manager", "N/A"))
+        table.add_row("Test Framework", detection_result.get("test_framework", "N/A"))
+        if detection_result.get("framework"):
+            table.add_row("Web Framework", detection_result.get("framework"))
 
     console.print(table)
 
     # Generate pipeline files
-    console.print("\n[bold]Generating pipeline files...[/bold]")
-    templates_dir = Path(__file__).parent.parent / "templates"
-    generator = ProjectGenerator(templates_dir)
+    console.print("\n[bold]Generating CI/CD files...[/bold]")
+
+    # Get the appropriate generator
+    GeneratorClass = AVAILABLE_FRAMEWORKS[detected_framework]['generator']
+    generator = GeneratorClass()
 
     try:
-        files = generator.generate(result, path)
+        files = generator.generate(detection_result, project_path)
         console.print("\n[green]✅ Generation successful![/green]")
         console.print(f"\n[bold]Generated files:[/bold]")
         for file_type, file_path in files['generated_files'].items():
@@ -58,21 +101,71 @@ def init(
         return files
     except Exception as e:
         console.print(f"[red]✗ Generation failed: {e}[/red]")
+        import traceback
+        traceback.print_exc()
         raise
 
 
 @app.command()
-def detect(path: Path = typer.Argument(Path("."), help="Project Path")):
-    """Detect project configuration without generating files"""
-    detector = ProjectDetector(path)  # Changed class name
-    result = detector.detect()
+def detect(
+        path: Path = typer.Argument(Path("."), help="Project Path"),
+        framework: Optional[str] = typer.Option(None, "--framework", help="Force specific framework"),
+):
+    """
+    Detect project configuration without generating files
+    """
+    project_path = Path(path).resolve()
 
-    if result is None:
-        console.print("[red]✗ No Python project detected![/red]")
-        return
+    console.print("🔍 Detecting project framework...")
 
-    result['project_path'] = str(path)
-    console.print_json(data=result)
+    # If user specified framework, use only that
+    if framework:
+        if framework not in AVAILABLE_FRAMEWORKS:
+            console.print(f"[red]✗ Unknown framework: {framework}[/red]")
+            return
+        frameworks_to_try = [framework]
+    else:
+        frameworks_to_try = list(AVAILABLE_FRAMEWORKS.keys())
+
+    # Try each framework
+    for fw_name in frameworks_to_try:
+        fw_config = AVAILABLE_FRAMEWORKS[fw_name]
+        DetectorClass = fw_config['detector']
+
+        detector = DetectorClass(project_path)
+        result = detector.detect()
+
+        if result is not None:
+            result['project_path'] = str(project_path)
+            result['detected_framework'] = fw_name
+            console.print(f"\n[green]✓ Detected: {fw_name}[/green]")
+            console.print_json(data=result)
+            return result
+
+    console.print("[red]✗ No supported framework detected![/red]")
+    return None
+
+
+@app.command()
+def list_frameworks():
+    """
+    List all supported frameworks
+    """
+    console.print("\n[bold]Supported Frameworks:[/bold]\n")
+
+    table = Table()
+    table.add_column("Framework", style="cyan")
+    table.add_column("Detector", style="yellow")
+    table.add_column("Generator", style="green")
+
+    for fw_name, fw_config in AVAILABLE_FRAMEWORKS.items():
+        table.add_row(
+            fw_name,
+            fw_config['detector'].__name__,
+            fw_config['generator'].__name__
+        )
+
+    console.print(table)
 
 
 if __name__ == "__main__":

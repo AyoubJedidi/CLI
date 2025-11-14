@@ -133,7 +133,7 @@ print("\n\n🔍 STEP 2: DETECTING PROJECT CONFIGURATION...")
 print("-" * 70)
 
 try:
-    from cli.detector import ProjectDetector
+    from core.detector import ProjectDetector
 
     print("✓ Imported PythonDetector")
 except ImportError as e:
@@ -161,7 +161,7 @@ print("\n\n📝 STEP 3: GENERATING PIPELINE FILES...")
 print("-" * 70)
 
 try:
-    from cli.generator import ProjectGenerator
+    from core.generator import ProjectGenerator
 
     print("✓ Imported PythonGenerator")
 except ImportError as e:

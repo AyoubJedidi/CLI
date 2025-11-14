@@ -1,4 +1,4 @@
-# toml
+# pyproject.toml
 [build-system]
 requires = ["setuptools>=68.0"]
 build-backend = "setuptools.build_meta"
@@ -16,6 +16,10 @@ dependencies = [
 [project.scripts]
 cicd = "cli.main:app"
 
-[tool.setuptools.packages.find]
-where = ["."]
-exclude = ["tests*"]
+[tool.setuptools]
+# Explicitly include all packages
+packages = ["cli", "core", "frameworks", "frameworks.python"]
+
+[tool.setuptools.package-data]
+# Include template files
+"frameworks.python" = ["templates/*.j2"]
