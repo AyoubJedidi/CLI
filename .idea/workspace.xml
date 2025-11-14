@@ -4,23 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fcb4225e-e518-4358-8d53-7459d206dedb" name="Changes" comment="update">
-      <change beforePath="$PROJECT_DIR$/.idea/project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/detector.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/generator.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/cli/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cli/models.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/jenkinsfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/s.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/docker_test.j2" beforeDir="false" afterPath="$PROJECT_DIR$/frameworks/python/templates/docker_test.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/jenkins_test.j2" beforeDir="false" afterPath="$PROJECT_DIR$/frameworks/python/templates/jenkins_test.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/python/config.schema.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/frameworks/python/templates/python/config.schema.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/python/jenkinsfile.j2" beforeDir="false" afterPath="$PROJECT_DIR$/frameworks/python/templates/python/jenkinsfile.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_workflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_workflow.py" afterDir="false" />
-    </list>
+    <list default="true" id="fcb4225e-e518-4358-8d53-7459d206dedb" name="Changes" comment="update strucutre" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -166,12 +150,29 @@
       <option name="project" value="LOCAL" />
       <updated>1762876684748</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="update strucutre">
+      <option name="closed" value="true" />
+      <created>1763133658760</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1763133658760</updated>
+    </task>
+    <task id="LOCAL-00005" summary="update strucutre">
+      <option name="closed" value="true" />
+      <created>1763133753668</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1763133753668</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
     <MESSAGE value="update" />
-    <option name="LAST_COMMIT_MESSAGE" value="update" />
+    <MESSAGE value="update strucutre" />
+    <option name="LAST_COMMIT_MESSAGE" value="update strucutre" />
   </component>
 </project>
