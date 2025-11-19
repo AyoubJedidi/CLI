@@ -18,8 +18,9 @@ cicd = "cli.main:app"
 
 [tool.setuptools]
 # Explicitly include all packages
-packages = ["cli", "core", "frameworks", "frameworks.python"]
+packages = ["cli", "core", "frameworks", "frameworks.python","frameworks.node"]
 
 [tool.setuptools.package-data]
 # Include template files
 "frameworks.python" = ["templates/*.j2"]
+"frameworks.node" = ["templates/*.j2"]

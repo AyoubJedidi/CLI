@@ -4,7 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fcb4225e-e518-4358-8d53-7459d206dedb" name="Changes" comment="update strucutre" />
+    <list default="true" id="fcb4225e-e518-4358-8d53-7459d206dedb" name="Changes" comment="update strucutre">
+      <change afterPath="$PROJECT_DIR$/frameworks/node/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frameworks/node/detector.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frameworks/node/generator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frameworks/node/templates/Dockerfile.j2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frameworks/node/templates/Jenkinsfile.j2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cicd_cli.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cicd_cli.egg-info/SOURCES.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frameworks/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/frameworks/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-flask-app/.python-version" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test-flask-app/.python-version" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-flask-app/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test-flask-app/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-flask-app/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test-flask-app/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-flask-app/jenkinsfile" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test-flask-app/jenkinsfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test-flask-app/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test-flask-app/requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -54,6 +70,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/tests" />
       <recent name="$PROJECT_DIR$/frameworks/python" />
       <recent name="$PROJECT_DIR$/core" />
       <recent name="$PROJECT_DIR$" />
@@ -166,7 +183,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763133753668</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update strucutre">
+      <option name="closed" value="true" />
+      <created>1763133761595</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1763133761595</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -174,5 +199,15 @@
     <MESSAGE value="update" />
     <MESSAGE value="update strucutre" />
     <option name="LAST_COMMIT_MESSAGE" value="update strucutre" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/core/__init__.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

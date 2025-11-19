@@ -1,0 +1,31 @@
+# frameworks/node/templates/Dockerfile.j2
+FROM {{ docker_base_image }}
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+{% if package_manager == 'yarn' %}
+COPY yarn.lock ./
+{% elif package_manager == 'pnpm' %}
+COPY pnpm-lock.yaml ./
+{% endif %}
+
+# Install dependencies
+{% if package_manager == 'yarn' %}
+RUN yarn install --frozen-lockfile
+{% elif package_manager == 'pnpm' %}
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+{% else %}
+RUN npm ci
+{% endif %}
+
+# Copy source code
+COPY . .
+
+# Build (if needed)
+RUN {{ package_manager }} run build || true
+
+EXPOSE {{ docker_port }}
+
+CMD ["{{ package_manager }}", "start"]

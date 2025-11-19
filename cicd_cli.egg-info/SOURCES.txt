@@ -11,6 +11,11 @@ core/__init__.py
 core/base_detector.py
 core/base_generator.py
 frameworks/__init__.py
+frameworks/node/__init__.py
+frameworks/node/detector.py
+frameworks/node/generator.py
+frameworks/node/templates/dockerfile.j2
+frameworks/node/templates/jenkinsfile.j2
 frameworks/python/__init__.py
 frameworks/python/detector.py
 frameworks/python/generator.py
