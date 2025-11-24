@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    tools {
+        dotnetsdk 'dotnet-{{ dotnet_version }}'
+    }
+
+    stages {
+        stage('Restore') {
+            steps {
+                {% if has_solution %}
+                sh 'dotnet restore *.sln'
+                {% else %}
+                sh 'dotnet restore'
+                {% endif %}
+            }
+        }
+
+        stage('Build') {
+            steps {
+                {% if has_solution %}
+                sh 'dotnet build *.sln --configuration Release --no-restore'
+                {% else %}
+                sh 'dotnet build --configuration Release --no-restore'
+                {% endif %}
+            }
+        }
+
+        stage('Test') {
+            steps {
+                {% if has_solution %}
+                sh 'dotnet test *.sln --configuration Release --no-build --verbosity normal'
+                {% else %}
+                sh 'dotnet test --configuration Release --no-build --verbosity normal'
+                {% endif %}
+            }
+        }
+
+        {% if is_web_app %}
+        stage('Publish') {
+            steps {
+                sh 'dotnet publish --configuration Release --output ./publish --no-build'
+            }
+        }
+        {% endif %}
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t {{ project_name }}:latest .'
+            }
+        }
+    }
+
+    post {
+        always {
+            {% if test_framework == 'xunit' %}
+            xunit([xUnit(pattern: '**/TestResults/*.xml')])
+            {% elif test_framework == 'nunit' %}
+            nunit(testResultsPattern: '**/TestResults/*.xml')
+            {% elif test_framework == 'mstest' %}
+            mstest(testResultsFile: '**/TestResults/*.trx')
+            {% endif %}
+        }
+    }
+}

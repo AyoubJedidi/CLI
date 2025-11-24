@@ -1,0 +1,45 @@
+# Build stage
+FROM {{ docker_base_image }} AS build
+WORKDIR /src
+
+{% if has_solution %}
+# Copy solution file
+COPY *.sln ./
+{% endif %}
+
+# Copy all csproj files and restore
+COPY **/*.csproj ./
+RUN for file in $(ls *.csproj); do mkdir -p ${file%.*}/ && mv $file ${file%.*}/; done
+RUN dotnet restore
+
+# Copy everything else and build
+COPY . .
+WORKDIR /src
+RUN dotnet build --configuration Release --no-restore
+
+{% if project_type == 'web' or is_web_app %}
+# Publish
+RUN dotnet publish --configuration Release --output /app/publish --no-build
+{% endif %}
+
+# Runtime stage
+FROM {{ docker_runtime_image }}
+WORKDIR /app
+
+{% if project_type == 'web' or is_web_app %}
+COPY --from=build /app/publish .
+
+# Expose port
+EXPOSE {{ docker_port }}
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:{{ docker_port }}
+
+ENTRYPOINT ["dotnet", "{{ project_name }}.dll"]
+
+{% else %}
+# For console apps
+COPY --from=build /src/bin/Release/net{{ dotnet_version }}/ .
+
+ENTRYPOINT ["dotnet", "{{ project_name }}.dll"]
+{% endif %}

@@ -6,6 +6,7 @@ from .node import NodeDetector, NodeGenerator
 from .maven import MavenDetector, MavenGenerator
 from .gradle import GradleDetector, GradleGenerator
 from .java import JavaDetector, JavaGenerator
+from .dotnet import DotNetDetector, DotNetGenerator
 
 # Order matters! Specific frameworks before generic
 AVAILABLE_FRAMEWORKS = {
@@ -28,6 +29,10 @@ AVAILABLE_FRAMEWORKS = {
     'java': {
         'detector': JavaDetector,
         'generator': JavaGenerator
+    },
+    'dotnet': {
+        'detector': DotNetDetector,
+        'generator': DotNetGenerator
     }
 }
 

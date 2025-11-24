@@ -24,7 +24,8 @@ packages = [
     "frameworks.node",
     "frameworks.maven",
     "frameworks.gradle",
-    "frameworks.java"
+    "frameworks.java",
+    "frameworks.dotnet"
 ]
 
 [tool.setuptools.package-data]
@@ -33,3 +34,4 @@ packages = [
 "frameworks.maven" = ["templates/*.j2"]
 "frameworks.gradle" = ["templates/*.j2"]
 "frameworks.java" = ["templates/*.j2"]
+"frameworks.dotnet" = ["templates/*.j2"]
