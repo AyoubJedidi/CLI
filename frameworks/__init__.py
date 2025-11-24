@@ -1,7 +1,13 @@
-# frameworks/__init__.py
+"""
+Frameworks module - Registry of all framework detectors and generators
+"""
 from .python import PythonDetector, PythonGenerator
 from .node import NodeDetector, NodeGenerator
+from .maven import MavenDetector, MavenGenerator
+from .gradle import GradleDetector, GradleGenerator
+from .java import JavaDetector, JavaGenerator
 
+# Order matters! Specific frameworks before generic
 AVAILABLE_FRAMEWORKS = {
     'python': {
         'detector': PythonDetector,
@@ -10,7 +16,19 @@ AVAILABLE_FRAMEWORKS = {
     'node': {
         'detector': NodeDetector,
         'generator': NodeGenerator
+    },
+    'maven': {
+        'detector': MavenDetector,
+        'generator': MavenGenerator
+    },
+    'gradle': {
+        'detector': GradleDetector,
+        'generator': GradleGenerator
+    },
+    'java': {
+        'detector': JavaDetector,
+        'generator': JavaGenerator
     }
 }
 
-__all__ = ['AVAILABLE_FRAMEWORKS', 'PythonDetector', 'PythonGenerator', 'NodeDetector', 'NodeGenerator']
+__all__ = ['AVAILABLE_FRAMEWORKS']
