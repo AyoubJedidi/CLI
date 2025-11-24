@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    tools {
+        dotnetsdk 'dotnet-8.0'
+    }
+
+    stages {
+        stage('Restore') {
+            steps {
+                sh 'dotnet restore'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'dotnet build --configuration Release --no-restore'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'dotnet test --configuration Release --no-build --verbosity normal'
+            }
+        }
+
+        stage('Publish') {
+            steps {
+                sh 'dotnet publish --configuration Release --output ./publish --no-build'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t test-dotnet-webapp:latest .'
+            }
+        }
+    }
+
+    post {
+        always {
+            xunit([xUnit(pattern: '**/TestResults/*.xml')])
+        }
+    }
+}
