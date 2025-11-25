@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fcb4225e-e518-4358-8d53-7459d206dedb" name="Changes" comment="java ,&#10;maven&#10;gradle">
-      <change afterPath="$PROJECT_DIR$/frameworks/dotnet/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frameworks/dotnet/detector.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frameworks/dotnet/generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frameworks/dotnet/templates/Dockerfile.j2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/frameworks/dotnet/templates/Jenkinsfile.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cicd_cli.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cicd_cli.egg-info/SOURCES.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frameworks/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/frameworks/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-    </list>
+    <list default="true" id="fcb4225e-e518-4358-8d53-7459d206dedb" name="Changes" comment=".Dotnet" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -219,7 +208,23 @@
       <option name="project" value="LOCAL" />
       <updated>1763996223478</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary=".Dotnet">
+      <option name="closed" value="true" />
+      <created>1763998280550</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1763998280550</updated>
+    </task>
+    <task id="LOCAL-00012" summary=".Dotnet">
+      <option name="closed" value="true" />
+      <created>1763998288573</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1763998288573</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -228,7 +233,8 @@
     <MESSAGE value="update strucutre" />
     <MESSAGE value="node js framework" />
     <MESSAGE value="java ,&#10;maven&#10;gradle" />
-    <option name="LAST_COMMIT_MESSAGE" value="java ,&#10;maven&#10;gradle" />
+    <MESSAGE value=".Dotnet" />
+    <option name="LAST_COMMIT_MESSAGE" value=".Dotnet" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
