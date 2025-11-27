@@ -1,40 +1,8 @@
-// frameworks/node/templates/Jenkinsfile.j2
-pipeline {
-    agent any
+@Library('cicd-framework@main') _
 
-    tools {
-        nodejs 'Node-{{ node_version }}'
-    }
-
-    stages {
-        stage('Install Dependencies') {
-            steps {
-                sh '{{ package_manager }} install'
-            }
-        }
-
-        stage('Lint') {
-            steps {
-                sh '{{ package_manager }} run lint || true'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh '{{ package_manager }} test'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh '{{ package_manager }} run build'
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                sh 'docker build -t {{ project_name }}:latest .'
-            }
-        }
-    }
-}
+standardPipeline(
+    projectType: 'npm',
+    projectName: '{{ project_name }}',
+    runTests: true,
+    buildDocker: true
+)

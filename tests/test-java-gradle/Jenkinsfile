@@ -1,48 +1,8 @@
-pipeline {
-    agent any
+@Library('cicd-framework@main') _
 
-    tools {
-        jdk 'JDK-17'
-    }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh './gradlew clean build -x test --no-daemon'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh './gradlew test --no-daemon'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                sh './gradlew bootJar --no-daemon'
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                sh 'docker build -t test-java-gradle:latest .'
-            }
-        }
-    }
-
-    post {
-        always {
-            junit '**/build/test-results/test/*.xml'
-        }
-        success {
-            archiveArtifacts artifacts: '**/build/libs/*.jar', fingerprint: true
-        }
-    }
-}
+standardPipeline(
+    projectType: 'gradle',
+    projectName: 'test-java-gradle',
+    runTests: true,
+    buildDocker: true
+)
