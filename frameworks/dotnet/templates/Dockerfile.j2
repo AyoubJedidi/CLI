@@ -7,10 +7,22 @@ WORKDIR /src
 COPY *.sln ./
 {% endif %}
 
-# Copy all csproj files and restore
-COPY **/*.csproj ./
-RUN for file in $(ls *.csproj); do mkdir -p ${file%.*}/ && mv $file ${file%.*}/; done
+# Copy all project folders containing csproj files
+{% if csproj_paths %}
+{% for path in csproj_paths %}
+COPY {{ path }}/*.csproj {{ path }}/
+{% endfor %}
+{% endif %}
+
+# Restore dependencies
+{% if csproj_paths %}
+{% for path in csproj_paths %}
+WORKDIR /src/{{ path }}
 RUN dotnet restore
+{% endfor %}
+{% else %}
+RUN dotnet restore
+{% endif %}
 
 # Copy everything else and build
 COPY . .
