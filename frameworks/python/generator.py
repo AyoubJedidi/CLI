@@ -45,12 +45,12 @@ class PythonGenerator(BaseGenerator):
 
         # 1. Generate Jenkinsfile
         jenkinsfile_path = output_path / 'jenkinsfile'
-        self.generate_file_from_template('jenkins_test.j2', context, jenkinsfile_path)
+        self.generate_file_from_template('Jenkinsfile.j2', context, jenkinsfile_path)
         generated_files['jenkinsfile'] = str(jenkinsfile_path)
 
         # 2. Generate Dockerfile
         dockerfile_path = output_path / 'Dockerfile'
-        self.generate_file_from_template('docker_test.j2', context, dockerfile_path)
+        self.generate_file_from_template('Dockerfile.j2', context, dockerfile_path)
         generated_files['dockerfile'] = str(dockerfile_path)
 
         # 3. Generate docker-compose.yml (if template exists)

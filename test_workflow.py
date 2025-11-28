@@ -41,8 +41,8 @@ print("✓ templates/ directory exists")
 required_files = [
     cli_dir / "detector.py",
     cli_dir / "generator.py",
-    templates_dir / "jenkins_test.j2",
-    templates_dir / "docker_test.j2",
+    templates_dir / "Jenkinsfile.j2",
+    templates_dir / "Dockerfile.j2",
 ]
 
 missing_files = [f for f in required_files if not f.exists()]
