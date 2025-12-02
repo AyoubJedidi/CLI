@@ -4,22 +4,23 @@ WORKDIR /app
 
 # Copy Gradle wrapper and build files
 COPY gradle gradle
-COPY gradlew build.gradle settings.gradle ./
+COPY gradlew build.gradle ./
+COPY settings.gradle . 2>/dev/null || true
 
 # Download dependencies
 RUN ./gradlew dependencies --no-daemon || true
 
-# Copy source code
+# Copy source
 COPY src ./src
 
-# Build application
-RUN ./gradlew bootJar -x test --no-daemon
+# Build
+RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Copy artifact from build stage
+# Copy JAR
 COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
