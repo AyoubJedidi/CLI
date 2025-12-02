@@ -2,13 +2,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project file first
+# Copy project file
 COPY *.csproj ./
 
 # Restore dependencies
 RUN dotnet restore
 
-# Copy everything else
+# Copy source code
 COPY . ./
 
 # Build
@@ -21,7 +21,7 @@ RUN dotnet publish -c Release -o /app/publish --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 
-# Copy published app
+# Copy published files
 COPY --from=build /app/publish .
 
 EXPOSE 8080
