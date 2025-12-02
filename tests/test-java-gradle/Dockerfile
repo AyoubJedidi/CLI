@@ -2,28 +2,23 @@
 FROM eclipse-temurin:17-jdk-alpine AS build
 WORKDIR /app
 
-# Copy Gradle files
+# Copy Gradle wrapper
 COPY gradle gradle
 COPY gradlew ./
 COPY build.gradle ./
+COPY settings.gradle ./
 
-# Copy settings.gradle if it exists (optional)
-COPY settings.gradl[e] . || :
-
-# Download dependencies
-RUN ./gradlew dependencies --no-daemon || true
-
-# Copy source code
+# Copy source
 COPY src ./src
 
-# Build application
+# Build
 RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
-# Copy JAR from build stage
+# Copy JAR
 COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
