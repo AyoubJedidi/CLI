@@ -1,35 +1,28 @@
 # Build stage
-FROM {{ docker_base_image }} AS build
+FROM eclipse-temurin:{{ java_version }}-jdk-alpine AS build
 WORKDIR /app
 
 # Copy Gradle wrapper and build files
 COPY gradle gradle
-COPY gradlew {% if uses_kotlin_dsl %}build.gradle.kts settings.gradle.kts{% else %}build.gradle settings.gradle{% endif %} ./
+COPY gradlew build.gradle ./
+COPY settings.gradle . 2>/dev/null || true
 
 # Download dependencies
 RUN ./gradlew dependencies --no-daemon || true
 
-# Copy source code
+# Copy source
 COPY src ./src
 
-# Build application
-{% if packaging == 'war' %}
-RUN ./gradlew bootWar -x test --no-daemon
-{% else %}
-RUN ./gradlew bootJar -x test --no-daemon
-{% endif %}
+# Build
+RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
-FROM {{ docker_runtime_image }}
+FROM eclipse-temurin:{{ java_version }}-jre-alpine
 WORKDIR /app
 
-# Copy artifact from build stage
-COPY --from=build /app/build/libs/*.{{ packaging }} app.{{ packaging }}
+# Copy JAR
+COPY --from=build /app/build/libs/*.jar app.jar
 
 EXPOSE {{ docker_port }}
 
-{% if packaging == 'war' %}
-ENTRYPOINT ["java", "-jar", "app.war"]
-{% else %}
 ENTRYPOINT ["java", "-jar", "app.jar"]
-{% endif %}
