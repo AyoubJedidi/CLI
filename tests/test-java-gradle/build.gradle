@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.2.0'
+    id 'application'
 }
 
 group = 'com.example'
@@ -12,5 +12,18 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // No Spring Boot - keep it simple
+    implementation 'com.google.guava:guava:32.1.3-jre'
+    
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+application {
+    mainClass = 'com.example.App'
+}
+
+test {
+    useJUnitPlatform()
 }
