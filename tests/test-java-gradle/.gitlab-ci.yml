@@ -1,4 +1,4 @@
-image: gradle:{{ java_version }}-jdk
+image: gradle:17-jdk
 
 stages:
   - build
@@ -17,7 +17,7 @@ cache:
 build:
   stage: build
   script:
-    - {% if uses_kotlin_dsl %}./gradlew{% else %}./gradlew{% endif %} clean build -x test
+    - ./gradlew clean build -x test
   artifacts:
     paths:
       - build/
