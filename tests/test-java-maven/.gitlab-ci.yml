@@ -1,4 +1,4 @@
-image: maven:{{ java_version }}-jdk
+image: maven:17-jdk
 
 stages:
   - build
