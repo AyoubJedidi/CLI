@@ -289,7 +289,7 @@ def version():
     """
     console.print("\n[bold cyan]CI/CD Framework Generator[/bold cyan]")
     console.print("[dim]Version:[/dim] [green]1.0.0[/green]")
-    console.print("[dim]Author:[/dim] [yellow]Your Name[/yellow]")
+    console.print("[dim]Author:[/dim] [yellow]Ayoub Jedidi[/yellow]")
     console.print()
 
 

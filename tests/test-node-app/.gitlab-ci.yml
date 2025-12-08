@@ -1,4 +1,4 @@
-image: node:{{ node_version }}
+image: node:20
 
 stages:
   - install
@@ -10,11 +10,6 @@ stages:
 cache:
   paths:
     - node_modules/
-    {% if package_manager == 'yarn' %}
-    - .yarn
-    {% elif package_manager == 'pnpm' %}
-    - .pnpm-store
-    {% endif %}
 
 variables:
   NODE_ENV: "production"
@@ -22,13 +17,7 @@ variables:
 install:
   stage: install
   script:
-    {% if package_manager == 'npm' %}
     - npm ci
-    {% elif package_manager == 'yarn' %}
-    - yarn install --frozen-lockfile
-    {% elif package_manager == 'pnpm' %}
-    - pnpm install --frozen-lockfile
-    {% endif %}
   artifacts:
     paths:
       - node_modules/
@@ -37,14 +26,14 @@ install:
 lint:
   stage: lint
   script:
-    - {{ package_manager }} run lint || echo "No lint script found"
+    - npm run lint || echo "No lint script found"
   dependencies:
     - install
 
 test:
   stage: test
   script:
-    - {{ package_manager }} test
+    - npm test
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   dependencies:
     - install
@@ -52,7 +41,7 @@ test:
 build:
   stage: build
   script:
-    - {{ package_manager }} run build || echo "No build script found"
+    - npm run build || echo "No build script found"
   artifacts:
     paths:
       - dist/
