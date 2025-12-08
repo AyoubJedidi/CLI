@@ -5,6 +5,25 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cicd-cli"
 version = "0.1.0"
+description = "Auto-detect project frameworks and generate CI/CD pipeline files"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+keywords = ["ci", "cd", "jenkins", "gitlab", "github", "pipeline", "devops", "cicd"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Build Tools",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
 dependencies = [
     "typer[all]>=0.9.0",
     "jinja2>=3.1.2",
@@ -12,8 +31,18 @@ dependencies = [
     "pydantic<2",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+
+# IMPORTANT: This should point to a function, not the typer app directly
 [project.scripts]
-cicd = "cli.main:app"
+cicd = "cli.main:main"
 
 [tool.setuptools]
 packages = [
@@ -35,3 +64,30 @@ packages = [
 "frameworks.gradle" = ["templates/*.j2"]
 "frameworks.java" = ["templates/*.j2"]
 "frameworks.dotnet" = ["templates/*.j2"]
+
+# Optional: Add pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --cov=cli --cov=core --cov=frameworks"
+
+# Optional: Add black configuration
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''

@@ -56,7 +56,7 @@ class PythonGenerator(BaseGenerator):
         context = self._prepare_context(detection_result, project_path)
 
         # Print generation info
-        print(f"\n📦 Generating files for: {context['project_name']}")
+        print(f"\n Generating files for: {context['project_name']}")
         print(f"   Python: {context['python_version']}")
         print(f"   Framework: {context['framework'] or 'N/A'}")
         print(f"   Package Manager: {context['package_manager']}")
@@ -69,7 +69,7 @@ class PythonGenerator(BaseGenerator):
         # Generate CI/CD files for each requested platform
         for platform in platforms:
             if platform not in template_map:
-                print(f"   ⚠️  Skipping unknown platform: {platform}")
+                print(f"    Skipping unknown platform: {platform}")
                 continue
 
             config = template_map[platform]
@@ -112,7 +112,7 @@ class PythonGenerator(BaseGenerator):
             except Exception as e:
                 print(f"   ⚠️  Could not generate Dockerfile: {e}")
 
-        # 2. Generate docker-compose.yml
+        # 2. Generate docker-compose.ymlf
         compose_template = self.templates_dir / 'docker-compose.yml.j2'
         if compose_template.exists():
             compose_path = output_path / 'docker-compose.yml'
@@ -166,6 +166,9 @@ class PythonGenerator(BaseGenerator):
             # Additional context for templates
             'has_pyproject_toml': (project_path / 'pyproject.toml').exists(),
             'has_setup_py': (project_path / 'setup.py').exists(),
+            'matrix': {
+                'python_version': [detection_result.get('python_version', '3.11')]
+            }
         })
 
         return context

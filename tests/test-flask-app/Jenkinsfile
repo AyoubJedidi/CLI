@@ -1,0 +1,9 @@
+@Library('cicd-framework@main') _
+
+standardPipeline(
+    projectType: 'python',
+    projectName: 'test-flask-app',
+    runTests: true,
+    buildDocker: true
+
+)

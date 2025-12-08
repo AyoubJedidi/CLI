@@ -11,15 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['{{ python_version }}']
+        python-version: {{ matrix.python_version | tojson }}
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python {% raw %}${{ matrix.python-version }}{% endraw %}
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
         cache: '{% if package_manager == "poetry" %}poetry{% else %}pip{% endif %}'
 
     {% if package_manager == 'poetry' %}
@@ -70,7 +70,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '{{ python_version }}'
+        python-version: '{{ matrix.python_version[0] }}'
 
     {% if package_manager == 'poetry' %}
     - name: Build with Poetry
@@ -89,6 +89,3 @@ jobs:
       with:
         name: dist
         path: dist/
-```
-
----

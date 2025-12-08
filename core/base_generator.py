@@ -98,7 +98,7 @@ class BaseGenerator:
             output_path.write_text(content)
 
             if verbose:
-                print(f"   ✓ Generated: {output_path.name}")
+                print(f"    Generated: {output_path.name}")
 
             return output_path
         except Exception as e:
