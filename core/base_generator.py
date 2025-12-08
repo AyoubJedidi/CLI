@@ -11,6 +11,7 @@ from typing import Dict, Any
 
 class BaseGenerator:
     """Base class for framework-specific generators"""
+    SUPPORTED_PLATFORMS = ['jenkins', 'gitlab', 'github']
 
     def __init__(self, framework_name: str):
         """

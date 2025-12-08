@@ -17,14 +17,24 @@ console = Console()
 def init(
         path: Path = typer.Argument(Path("."), help="Project Path"),
         framework: Optional[str] = typer.Option(None, "--framework", help="Force specific framework"),
+        platforms: Optional[str] = typer.Option("jenkins", "--platforms", help="Comma-separated platforms: jenkins,gitlab,github"),
 ):
     """
     Initialize CI/CD pipeline for a project
     Auto-detects framework or use --framework to specify
     """
-    console.print("🔍 Detecting project framework...")
+    console.print(" Detecting project framework...")
 
     project_path = Path(path).resolve()
+
+    requested_platforms = [p.strip().lower() for p in platforms.split(',')]
+    valid_platforms = ['jenkins', 'gitlab', 'github']
+    invalid = [p for p in requested_platforms if p not in valid_platforms]
+
+    if invalid:
+        console.print(f"[red]✗ Invalid platforms: {', '.join(invalid)}[/red]")
+        console.print(f"Valid platforms: {', '.join(valid_platforms)}")
+        return
 
     # If user specified framework, use only that
     if framework:
@@ -86,18 +96,18 @@ def init(
     console.print(table)
 
     # Generate pipeline files
-    console.print("\n[bold]Generating CI/CD files...[/bold]")
+    console.print(f"\n[bold]Generating CI/CD files for: {', '.join(requested_platforms)}...[/bold]")
 
     # Get the appropriate generator
     GeneratorClass = AVAILABLE_FRAMEWORKS[detected_framework]['generator']
     generator = GeneratorClass()
 
     try:
-        files = generator.generate(detection_result, project_path)
-        console.print("\n[green]✅ Generation successful![/green]")
+        files = generator.generate(detection_result, project_path, requested_platforms)
+        console.print("\n[green]  Generation successful![/green]")
         console.print(f"\n[bold]Generated files:[/bold]")
-        for file_type, file_path in files['generated_files'].items():
-            console.print(f"  ✓ {file_type}: {file_path}")
+        for platform, file_info in files['generated_files'].items():
+            console.print(f"  ✓ {platform}: {file_info}")
         return files
     except Exception as e:
         console.print(f"[red]✗ Generation failed: {e}[/red]")
