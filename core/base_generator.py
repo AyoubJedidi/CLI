@@ -34,7 +34,7 @@ class BaseGenerator:
             lstrip_blocks=True
         )
 
-    def generate(self, detection_result: Dict, output_dir: Path) -> Dict:
+    def generate(self, detection_result: Dict, output_dir: Path, platforms: list = None) -> Dict:
         """
         Main generation method - must be overridden by child classes
 
@@ -48,6 +48,18 @@ class BaseGenerator:
         raise NotImplementedError("Subclasses must implement generate()")
 
     # ============ Shared Template Rendering ============
+    def get_platform_template_map(self) -> Dict[str, Dict]:
+        """
+        Override in child classes to define platform-specific templates
+
+        Returns:
+            {
+                'jenkins': {'template': 'Jenkinsfile.j2', 'output': 'Jenkinsfile'},
+                'gitlab': {'template': 'gitlab-ci.yml.j2', 'output': '.gitlab-ci.yml'},
+                'github': {'template': 'github-actions.yml.j2', 'output': '.github/workflows/ci.yml'}
+            }
+        """
+        return {}
 
     def render_template(self, template_name: str, context: Dict[str, Any]) -> str:
         """
