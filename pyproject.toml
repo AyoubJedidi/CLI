@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=68.0"]
+requires = ["setuptools>=64.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -45,17 +45,8 @@ dev = [
 cicd = "cli.main:main"
 
 [tool.setuptools]
-packages = [
-    "cli",
-    "core",
-    "frameworks",
-    "frameworks.python",
-    "frameworks.node",
-    "frameworks.maven",
-    "frameworks.gradle",
-    "frameworks.java",
-    "frameworks.dotnet"
-]
+# Enable package discovery
+packages = ["cli", "core", "frameworks", "frameworks.python", "frameworks.node", "frameworks.maven", "frameworks.gradle", "frameworks.java", "frameworks.dotnet"]
 
 [tool.setuptools.package-data]
 "frameworks.python" = ["templates/*.j2"]

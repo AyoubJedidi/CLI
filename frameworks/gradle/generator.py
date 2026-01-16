@@ -127,6 +127,11 @@ class GradleGenerator(BaseGenerator):
             'docker_base_image': f"eclipse-temurin:{java_version}-jdk-alpine",
             'docker_runtime_image': f"eclipse-temurin:{java_version}-jre-alpine",
             'docker_port': self._get_framework_port(detection_result.get('framework')),
+
+            # Deployment configuration
+            'deployment_type': detection_result.get('deployment_type', 'webapp'),
+            'cloud_provider': detection_result.get('cloud_provider', 'local'),
+
             'matrix': {
                 'java_version': [java_version]
             }

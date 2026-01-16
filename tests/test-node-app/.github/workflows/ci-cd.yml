@@ -55,9 +55,20 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build Docker image
+    - name: Build Docker image (Local)
       uses: docker/build-push-action@v4
       with:
         context: .
         push: false
         tags: test-node-app:latest
+        load: true
+
+    - name: Save Docker image
+      run: |
+        docker save test-node-app:latest | gzip > test-node-app.tar.gz
+
+    - name: Upload Docker image artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: docker-image
+        path: test-node-app.tar.gz

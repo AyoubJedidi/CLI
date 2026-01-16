@@ -70,9 +70,122 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
 
-    - name: Build Docker image
+    {% if cloud_provider == 'aws' %}
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: {% raw %}${{ secrets.AWS_ACCESS_KEY_ID }}{% endraw %}
+        aws-secret-access-key: {% raw %}${{ secrets.AWS_SECRET_ACCESS_KEY }}{% endraw %}
+        aws-region: {% raw %}${{ secrets.AWS_REGION }}{% endraw %}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build and push to ECR
+      env:
+        ECR_REGISTRY: {% raw %}${{ steps.login-ecr.outputs.registry }}{% endraw %}
+        ECR_REPOSITORY: {{ project_name }}
+        IMAGE_TAG: {% raw %}${{ github.sha }}{% endraw %}
+      run: |
+        docker build -t {% raw %}$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG{% endraw %} .
+        docker build -t {% raw %}$ECR_REGISTRY/$ECR_REPOSITORY:latest{% endraw %} .
+        docker push {% raw %}$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG{% endraw %}
+        docker push {% raw %}$ECR_REGISTRY/$ECR_REPOSITORY:latest{% endraw %}
+
+    {% if deployment_type == 'webapp' %}
+    - name: Deploy to AWS App Runner
+      run: |
+        echo "Deploy to AWS App Runner, ECS, or Elastic Beanstalk"
+        # Add your deployment commands here
+    {% elif deployment_type == 'instance' %}
+    - name: Deploy to EC2 Instance
+      run: |
+        echo "Deploy to EC2 instance"
+        # Add your deployment commands here
+    {% endif %}
+
+    {% elif cloud_provider == 'azure' %}
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: {% raw %}${{ secrets.ACR_LOGIN_SERVER }}{% endraw %}
+        username: {% raw %}${{ secrets.ACR_USERNAME }}{% endraw %}
+        password: {% raw %}${{ secrets.ACR_PASSWORD }}{% endraw %}
+
+    - name: Build and push to ACR
+      run: |
+        docker build -t {% raw %}${{ secrets.ACR_LOGIN_SERVER }}{% endraw %}/{{ project_name }}:{% raw %}${{ github.sha }}{% endraw %} .
+        docker build -t {% raw %}${{ secrets.ACR_LOGIN_SERVER }}{% endraw %}/{{ project_name }}:latest .
+        docker push {% raw %}${{ secrets.ACR_LOGIN_SERVER }}{% endraw %}/{{ project_name }}:{% raw %}${{ github.sha }}{% endraw %}
+        docker push {% raw %}${{ secrets.ACR_LOGIN_SERVER }}{% endraw %}/{{ project_name }}:latest
+
+    {% if deployment_type == 'webapp' %}
+    - name: Deploy to Azure App Service
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: {% raw %}${{ secrets.AZURE_WEBAPP_NAME }}{% endraw %}
+        images: {% raw %}${{ secrets.ACR_LOGIN_SERVER }}{% endraw %}/{{ project_name }}:{% raw %}${{ github.sha }}{% endraw %}
+    {% elif deployment_type == 'instance' %}
+    - name: Deploy to Azure VM
+      run: |
+        echo "Deploy to Azure VM"
+        # Add your deployment commands here
+    {% endif %}
+
+    {% elif cloud_provider == 'gcp' %}
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: {% raw %}${{ secrets.GCP_SA_KEY }}{% endraw %}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Configure Docker for GCR
+      run: gcloud auth configure-docker
+
+    - name: Build and push to GCR
+      env:
+        GCP_PROJECT: {% raw %}${{ secrets.GCP_PROJECT_ID }}{% endraw %}
+        IMAGE_NAME: {{ project_name }}
+      run: |
+        docker build -t gcr.io/{% raw %}$GCP_PROJECT/$IMAGE_NAME:${{ github.sha }}{% endraw %} .
+        docker build -t gcr.io/{% raw %}$GCP_PROJECT/$IMAGE_NAME:latest{% endraw %} .
+        docker push gcr.io/{% raw %}$GCP_PROJECT/$IMAGE_NAME:${{ github.sha }}{% endraw %}
+        docker push gcr.io/{% raw %}$GCP_PROJECT/$IMAGE_NAME:latest{% endraw %}
+
+    {% if deployment_type == 'webapp' %}
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy {{ project_name }} \
+          --image gcr.io/{% raw %}${{ secrets.GCP_PROJECT_ID }}{% endraw %}/{{ project_name }}:{% raw %}${{ github.sha }}{% endraw %} \
+          --platform managed \
+          --region {% raw %}${{ secrets.GCP_REGION }}{% endraw %} \
+          --allow-unauthenticated
+    {% elif deployment_type == 'instance' %}
+    - name: Deploy to GCE Instance
+      run: |
+        echo "Deploy to Google Compute Engine"
+        # Add your deployment commands here
+    {% endif %}
+
+    {% else %}
+    - name: Build Docker image (Local)
       uses: docker/build-push-action@v4
       with:
         context: .
         push: false
         tags: {{ project_name }}:latest
+        load: true
+
+    - name: Save Docker image
+      run: |
+        docker save {{ project_name }}:latest | gzip > {{ project_name }}.tar.gz
+
+    - name: Upload Docker image artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: docker-image
+        path: {{ project_name }}.tar.gz
+    {% endif %}

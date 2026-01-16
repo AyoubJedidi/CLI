@@ -1,0 +1,195 @@
+# {{ project_name }} - CI/CD Configuration
+
+> Generated on {{ generation_date }}
+
+## Project Information
+
+- **Framework**: {{ framework or 'Python Application' }}
+- **Python Version**: {{ python_version }}
+- **Package Manager**: {{ package_manager }}
+- **Test Framework**: {{ test_framework }}
+
+## Deployment Configuration
+
+- **Cloud Provider**: {{ cloud_provider.upper() }}
+{% if cloud_provider == 'local' %}
+- **Target**: Local Docker Registry
+{% elif cloud_provider == 'aws' %}
+- **Target**: Amazon Web Services (AWS)
+{% elif cloud_provider == 'azure' %}
+- **Target**: Microsoft Azure
+{% elif cloud_provider == 'gcp' %}
+- **Target**: Google Cloud Platform
+{% endif %}
+- **Deployment Type**: {{ deployment_type.capitalize() }}
+{% if deployment_type == 'webapp' %}
+  - This project will be deployed as a web application/service
+  - Default port: {{ docker_port }}
+{% elif deployment_type == 'instance' %}
+  - This project will be deployed as a VM/container instance
+{% endif %}
+
+## Generated Files
+
+This configuration includes:
+
+- CI/CD pipeline files for your selected platforms
+- Dockerfile for containerization
+- Docker configuration optimized for {{ deployment_type }}
+
+## Quick Start
+
+### Local Development
+
+```bash
+# Install dependencies
+{% if package_manager == 'pip' %}
+pip install -r requirements.txt
+{% elif package_manager == 'poetry' %}
+poetry install
+{% elif package_manager == 'pipenv' %}
+pipenv install
+{% endif %}
+
+# Run tests
+{% if test_framework == 'pytest' %}
+pytest
+{% elif test_framework == 'unittest' %}
+python -m unittest discover
+{% endif %}
+```
+
+### Docker Build
+
+```bash
+# Build the Docker image
+docker build -t {{ project_name }}:latest .
+
+# Run the container
+docker run -p {{ docker_port }}:{{ docker_port }} {{ project_name }}:latest
+```
+
+{% if cloud_provider != 'local' %}
+### Cloud Deployment
+
+#### {{ cloud_provider.upper() }} Deployment
+
+{% if cloud_provider == 'aws' %}
+{% if deployment_type == 'webapp' %}
+**AWS Elastic Beanstalk / ECS / App Runner**
+
+1. Configure AWS credentials
+2. Push Docker image to Amazon ECR
+3. Deploy to your chosen service (Elastic Beanstalk, ECS, or App Runner)
+
+```bash
+# Push to ECR
+aws ecr get-login-password --region <region> | docker login --username AWS --password-stdin <account>.dkr.ecr.<region>.amazonaws.com
+docker tag {{ project_name }}:latest <account>.dkr.ecr.<region>.amazonaws.com/{{ project_name }}:latest
+docker push <account>.dkr.ecr.<region>.amazonaws.com/{{ project_name }}:latest
+```
+{% elif deployment_type == 'instance' %}
+**AWS EC2 Instance**
+
+1. Launch an EC2 instance
+2. SSH into the instance
+3. Install Docker and pull your image
+4. Run the container
+
+```bash
+# On EC2 instance
+docker pull <account>.dkr.ecr.<region>.amazonaws.com/{{ project_name }}:latest
+docker run -d -p {{ docker_port }}:{{ docker_port }} <account>.dkr.ecr.<region>.amazonaws.com/{{ project_name }}:latest
+```
+{% endif %}
+{% elif cloud_provider == 'azure' %}
+{% if deployment_type == 'webapp' %}
+**Azure App Service / Container Instances**
+
+1. Configure Azure credentials
+2. Push Docker image to Azure Container Registry (ACR)
+3. Deploy to Azure App Service or Container Instances
+
+```bash
+# Push to ACR
+az acr login --name <registry-name>
+docker tag {{ project_name }}:latest <registry-name>.azurecr.io/{{ project_name }}:latest
+docker push <registry-name>.azurecr.io/{{ project_name }}:latest
+```
+{% elif deployment_type == 'instance' %}
+**Azure Virtual Machine**
+
+1. Create an Azure VM
+2. Connect to the VM via SSH
+3. Install Docker and run your container
+
+```bash
+# On Azure VM
+docker pull <registry-name>.azurecr.io/{{ project_name }}:latest
+docker run -d -p {{ docker_port }}:{{ docker_port }} <registry-name>.azurecr.io/{{ project_name }}:latest
+```
+{% endif %}
+{% elif cloud_provider == 'gcp' %}
+{% if deployment_type == 'webapp' %}
+**Google Cloud Run / App Engine**
+
+1. Configure GCP credentials
+2. Push Docker image to Google Container Registry (GCR)
+3. Deploy to Cloud Run or App Engine
+
+```bash
+# Push to GCR
+gcloud auth configure-docker
+docker tag {{ project_name }}:latest gcr.io/<project-id>/{{ project_name }}:latest
+docker push gcr.io/<project-id>/{{ project_name }}:latest
+
+# Deploy to Cloud Run
+gcloud run deploy {{ project_name }} --image gcr.io/<project-id>/{{ project_name }}:latest --port {{ docker_port }}
+```
+{% elif deployment_type == 'instance' %}
+**Google Compute Engine (GCE)**
+
+1. Create a GCE instance
+2. SSH into the instance
+3. Install Docker and run your container
+
+```bash
+# On GCE instance
+docker pull gcr.io/<project-id>/{{ project_name }}:latest
+docker run -d -p {{ docker_port }}:{{ docker_port }} gcr.io/<project-id>/{{ project_name }}:latest
+```
+{% endif %}
+{% endif %}
+{% endif %}
+
+## Environment Variables
+
+Configure the following environment variables for your deployment:
+
+```bash
+# Application settings
+APP_ENV=production
+PORT={{ docker_port }}
+
+# Add your application-specific environment variables here
+```
+
+## CI/CD Pipeline
+
+The generated CI/CD pipeline includes:
+
+- 🧪 **Testing**: Automated test execution
+- 🔍 **Linting**: Code quality checks
+- 🔒 **Security Scanning**: Vulnerability detection
+- 🐳 **Docker Build**: Container image creation
+{% if cloud_provider != 'local' %}
+- ☁️ **Cloud Deployment**: Automated deployment to {{ cloud_provider.upper() }}
+{% endif %}
+
+## Support
+
+For issues or questions, please refer to the project documentation or contact your DevOps team.
+
+---
+
+*This configuration was automatically generated by the CI/CD Framework Generator*

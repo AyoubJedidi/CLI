@@ -5,5 +5,4 @@ standardPipeline(
     projectName: 'test-flask-app',
     runTests: true,
     buildDocker: true
-
 )

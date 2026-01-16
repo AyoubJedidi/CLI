@@ -163,6 +163,10 @@ class PythonGenerator(BaseGenerator):
             'docker_base_image': f"python:{detection_result.get('python_version', '3.11')}-slim",
             'docker_port': self._get_framework_port(detection_result.get('framework')),
 
+            # Deployment configuration
+            'deployment_type': detection_result.get('deployment_type', 'webapp'),
+            'cloud_provider': detection_result.get('cloud_provider', 'local'),
+
             # Additional context for templates
             'has_pyproject_toml': (project_path / 'pyproject.toml').exists(),
             'has_setup_py': (project_path / 'setup.py').exists(),

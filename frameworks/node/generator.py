@@ -124,6 +124,11 @@ class NodeGenerator(BaseGenerator):
             'test_framework': detection_result.get('test_framework', 'jest'),
             'docker_base_image': f"node:{node_version}-alpine",
             'docker_port': self._get_framework_port(detection_result.get('framework')),
+
+            # Deployment configuration
+            'deployment_type': detection_result.get('deployment_type', 'webapp'),
+            'cloud_provider': detection_result.get('cloud_provider', 'local'),
+
             # Add matrix configuration for CI/CD
             'matrix': {
                 'node_version': [node_version]

@@ -128,6 +128,11 @@ class DotNetGenerator(BaseGenerator):
             'docker_base_image': f"mcr.microsoft.com/dotnet/sdk:{dotnet_version}",
             'docker_runtime_image': self._get_runtime_image(dotnet_version, is_web_app),
             'docker_port': self._get_framework_port(detection_result.get('framework')),
+
+            # Deployment configuration
+            'deployment_type': detection_result.get('deployment_type', 'webapp'),
+            'cloud_provider': detection_result.get('cloud_provider', 'local'),
+
             'matrix': {
                 'dotnet_version': [dotnet_version]
             }

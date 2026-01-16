@@ -36,7 +36,19 @@ def init(
         "jenkins",
         "--platforms",
         "-p",
-        help="Comma-separated CI/CD platforms to generate (jenkins,gitlab,github)"
+        help="CI/CD platforms to generate (comma-separated). Options: jenkins | gitlab | github"
+    ),
+    deployment_type: str = typer.Option(
+        "webapp",
+        "--deployment-type",
+        "-dt",
+        help="Type of deployment. Options: webapp | instance"
+    ),
+    cloud_provider: str = typer.Option(
+        "local",
+        "--cloud-provider",
+        "-cp",
+        help="Cloud provider for deployment. Options: local | aws | azure | gcp"
     ),
 ):
     """
@@ -57,6 +69,12 @@ def init(
 
         # Force Python framework with multiple platforms
         $ cicd-framework init --framework python --platforms gitlab,github
+
+        # Deploy to AWS as a webapp
+        $ cicd-framework init --cloud-provider aws --deployment-type webapp
+
+        # Deploy to Azure as a VM instance
+        $ cicd-framework init --cloud-provider azure --deployment-type instance
     """
     console.print("🔍 Detecting project framework...\n")
 
@@ -71,6 +89,22 @@ def init(
         console.print(f"[red]✗ Invalid platforms: {', '.join(invalid)}[/red]")
         console.print(f"[yellow]Valid platforms: {', '.join(valid_platforms)}[/yellow]")
         console.print("\n[dim]Tip: Use comma-separated values like --platforms jenkins,gitlab,github[/dim]")
+        raise typer.Exit(code=1)
+
+    # Validate deployment type
+    deployment_type = deployment_type.lower()
+    valid_deployment_types = ['webapp', 'instance']
+    if deployment_type not in valid_deployment_types:
+        console.print(f"[red]✗ Invalid deployment type: {deployment_type}[/red]")
+        console.print(f"[yellow]Valid deployment types: {', '.join(valid_deployment_types)}[/yellow]")
+        raise typer.Exit(code=1)
+
+    # Validate cloud provider
+    cloud_provider = cloud_provider.lower()
+    valid_cloud_providers = ['local', 'aws', 'azure', 'gcp']
+    if cloud_provider not in valid_cloud_providers:
+        console.print(f"[red]✗ Invalid cloud provider: {cloud_provider}[/red]")
+        console.print(f"[yellow]Valid cloud providers: {', '.join(valid_cloud_providers)}[/yellow]")
         raise typer.Exit(code=1)
 
     # If user specified framework, use only that
@@ -115,6 +149,10 @@ def init(
     # Add project path to result
     detection_result['project_path'] = str(project_path)
 
+    # Add deployment configuration
+    detection_result['deployment_type'] = deployment_type
+    detection_result['cloud_provider'] = cloud_provider
+
     # Display detection results
     console.print()
     table = Table(title="📊 Detection Results", show_header=True, header_style="bold cyan")
@@ -123,6 +161,8 @@ def init(
 
     table.add_row("Framework", detected_framework)
     table.add_row("Language", detection_result.get("language", "N/A"))
+    table.add_row("Cloud Provider", cloud_provider.upper() if cloud_provider != "local" else "Local Docker")
+    table.add_row("Deployment Type", deployment_type.capitalize())
 
     # Add framework-specific details
     if detected_framework == 'python':
@@ -293,6 +333,47 @@ def version():
     console.print()
 
 
+@app.command()
+def options():
+    """
+    Show all available deployment options and their values.
+    """
+    console.print("\n[bold cyan]🚀 Available Deployment Options[/bold cyan]\n")
+
+    # Cloud Providers table
+    providers_table = Table(title="Cloud Providers", show_header=True, header_style="bold cyan")
+    providers_table.add_column("Value", style="green", no_wrap=True)
+    providers_table.add_column("Description", style="yellow")
+
+    providers_table.add_row("local", "Local Docker Registry (default)")
+    providers_table.add_row("aws", "Amazon Web Services")
+    providers_table.add_row("azure", "Microsoft Azure")
+    providers_table.add_row("gcp", "Google Cloud Platform")
+
+    console.print(providers_table)
+    console.print()
+
+    # Deployment Types table
+    types_table = Table(title="Deployment Types", show_header=True, header_style="bold green")
+    types_table.add_column("Value", style="green", no_wrap=True)
+    types_table.add_column("Description", style="yellow")
+
+    types_table.add_row("webapp", "Web Application/Service (default)")
+    types_table.add_row("instance", "VM/Container Instance")
+
+    console.print(types_table)
+    console.print()
+
+    # Usage examples
+    console.print("[bold]Usage Examples:[/bold]\n")
+    console.print("  [dim]#[/dim] Deploy to AWS as a web application:")
+    console.print("  [cyan]cicd init --cloud-provider aws --deployment-type webapp[/cyan]\n")
+    console.print("  [dim]#[/dim] Deploy to Azure as a VM instance:")
+    console.print("  [cyan]cicd init --cloud-provider azure --deployment-type instance[/cyan]\n")
+    console.print("  [dim]#[/dim] Local Docker deployment:")
+    console.print("  [cyan]cicd init --cloud-provider local[/cyan]\n")
+
+
 def main():
     """Entry point for the CLI"""
     app()
@@ -300,3 +381,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
