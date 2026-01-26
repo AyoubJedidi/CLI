@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "Hch3USFIv+cH/UE8l9WcQIT3CrN2KTTq+ITyVouSIX4=",
+  "Source": "test-dotnet-webapp",
+  "BasePath": "_content/test-dotnet-webapp",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

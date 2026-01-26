@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "ujq+j+Zk+jNl1w8wWdGGkBH9w0xZrqCqxhsV8GFBHZM=",
+  "Source": "test-dotnet-webapp",
+  "BasePath": "_content/test-dotnet-webapp",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,0 +1,5 @@
+/home/ayoub/Documents/CLI/tests/test-dotnet-webapp/publish/test-dotnet-webapp
+/home/ayoub/Documents/CLI/tests/test-dotnet-webapp/publish/test-dotnet-webapp.dll
+/home/ayoub/Documents/CLI/tests/test-dotnet-webapp/publish/test-dotnet-webapp.deps.json
+/home/ayoub/Documents/CLI/tests/test-dotnet-webapp/publish/test-dotnet-webapp.runtimeconfig.json
+/home/ayoub/Documents/CLI/tests/test-dotnet-webapp/publish/test-dotnet-webapp.pdb
