@@ -3,7 +3,7 @@ requires = ["setuptools>=64.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cicd-cli"
+name = "cicd-cli-tool"
 version = "0.1.0"
 description = "Auto-detect project frameworks and generate CI/CD pipeline files"
 readme = "README.md"
