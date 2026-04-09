@@ -2,7 +2,7 @@
 .env
 *.egg-info/
 Readme.md
-venv/
+.venv
 __pycache__/
-./dist/
-./build/
+dist/
+build/
