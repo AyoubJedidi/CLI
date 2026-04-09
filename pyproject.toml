@@ -9,7 +9,7 @@ description = "Auto-detect project frameworks and generate CI/CD pipeline files"
 readme = "README.md"
 requires-python = ">=3.8"
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Ayoub Jedidi", email = "ayoub.ejedidi@gmail.com"}
 ]
 keywords = ["ci", "cd", "jenkins", "gitlab", "github", "pipeline", "devops", "cicd"]
 classifiers = [

@@ -1,3 +1,7 @@
 .idea/
 .env
 *.egg-info/
+Readme.md
+venv/
+__pycache__/
+./dist/

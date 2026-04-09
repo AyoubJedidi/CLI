@@ -1,0 +1,73 @@
+image: maven:{{ java_version }}-jdk
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
+cache:
+  paths:
+    - .m2/repository/
+
+build:
+  stage: build
+  script:
+    - mvn clean compile
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+test:
+  stage: test
+  script:
+    - mvn test
+  coverage: '/Total.*?([0-9]{1,3})%/'
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
+    paths:
+      - target/site/jacoco/
+    expire_in: 1 week
+
+package:
+  stage: package
+  script:
+    - mvn package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+      - target/*.war
+    expire_in: 1 month
+  only:
+    - main
+    - master
+    - develop
+
+docker:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+  only:
+    - main
+    - master
+
+deploy:
+  stage: deploy
+  script:
+    - mvn deploy -DskipTests
+  only:
+    - main
+    - master
+  when: manual
