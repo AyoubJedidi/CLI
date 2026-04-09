@@ -5,3 +5,4 @@ Readme.md
 venv/
 __pycache__/
 ./dist/
+./build/
